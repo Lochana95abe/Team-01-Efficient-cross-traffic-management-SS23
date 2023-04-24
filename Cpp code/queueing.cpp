@@ -107,6 +107,11 @@ bool Intersection::is_junction_clear() {
     for (int i = 0; i}
     }
 }
+         
+void spawn(int num_cars) {
+    for (int i = 0; i < num_cars; i++) {
+        // depends on how many cars are on this crossroad
+    }
 
 // Car1's function
 void carOne() {
