@@ -38,5 +38,3 @@ public:
     void move_cars();
     void print_street();
 };
-
-#endif
