@@ -8,12 +8,12 @@
 
 class Car {
 public:
-    Car(int id, int lane, int speed, int position, int destination);
+    Car(int id, int lane, int speed, int position, int dest);
     int id;
     int lane;
     int speed;
     int position;
-    int destination;
+    int dest;
     int distance_to_obstacle;
     int distance_to_junction;
     int time_to_clear_junction;
@@ -28,17 +28,15 @@ public:
     void spawn();
 };
 
-class Road {
+class Street {
 public:
-    Road(int num_lanes, int road_length, int junction_pos);
-    int num_lanes;
-    int road_length;
+    Street(int num_lanes, int road_length, int junction_pos);
     int junction_pos;
     std::vector<std::queue<Car>> lanes;
     std::vector<int> junction_lanes;
     std::vector<std::vector<int>> obstacle_positions;
     void move_cars();
-    void print_road();
+    void print_street();
 };
 
 #endif
