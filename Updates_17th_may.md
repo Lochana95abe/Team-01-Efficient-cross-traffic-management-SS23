@@ -3,5 +3,5 @@
 We'll be using Round Robin algorithm.
 
 
-Changes to be made: UML diagrams: add the speed, accelt=ration, vehicle id, etc...
+Changes to be made: UML diagrams: add the speed, acceleration, vehicle id, etc...
 spawning loction to where (destination)
