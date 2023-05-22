@@ -3,17 +3,22 @@
 
 class Car {
 private:
-    int id;
-    int lane;
-    int destination;
-    int speed;
+    string id_unique; // unique id of the car, in string. can be randomized
+    int lane; // for implementation of north, east, south and west lanes
+    int destination; // to which lane the car will travel to
+    // we assume there's no U-turn; only 3 choices the car will make
+    // e.g. car spawned from West, then it travels to East, South or North only
+    int speed; // from 1 to 3 units
+    int enter_time // entrance time
 
 public:
-    Car(int id, int lane, int destination, int speed) {
+    Car(string id_unique, int id, int lane, int destination, int speed, int enter_time) {
+        this->id_unique = id_unique;
         this->id = id;
         this->lane = lane;
         this->destination = destination;
         this->speed = speed;
+        this->enter_time
     }
 
     int get_id() {
