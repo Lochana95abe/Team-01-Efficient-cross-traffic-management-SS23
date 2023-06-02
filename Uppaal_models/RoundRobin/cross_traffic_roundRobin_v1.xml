@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+
+int [0,2] carEnter = 0;
+bool intersectionOccupied = false;
+
+int [0,1] carIntersection = 0;</declaration>
+	<template>
+		<name x="5" y="5">car</name>
+		<declaration>// Place local declarations here.
+int[1, 11] position = 1;
+int[1, 2] path = 1;</declaration>
+		<location id="id0" x="-391" y="-34">
+			<name x="-459" y="-42">Spawn</name>
+		</location>
+		<location id="id1" x="-280" y="-42">
+			<name x="-314" y="-17">Moving</name>
+		</location>
+		<location id="id2" x="-102" y="59">
+			<name x="-85" y="26">End</name>
+		</location>
+		<location id="id3" x="-306" y="-178">
+			<name x="-316" y="-212">Intersection</name>
+		</location>
+		<init ref="id0"/>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-178" y="-25">position == 11</label>
+			<label kind="assignment" x="-297" y="25">carEnter = false</label>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-102" y="-136">position == 10</label>
+			<label kind="assignment" x="-102" y="-102">position++</label>
+			<nail x="-93" y="-110"/>
+		</transition>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-289" y="-136">position == 10</label>
+			<label kind="assignment" x="-280" y="-110">carEnter++</label>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-373" y="-72">position &lt; 10</label>
+			<label kind="assignment" x="-373" y="-38">position = 10</label>
+		</transition>
+	</template>
+	<template>
+		<name>intersection</name>
+		<location id="id4" x="-127" y="93">
+			<name x="-137" y="59">RoundRobin</name>
+		</location>
+		<location id="id5" x="102" y="93">
+			<name x="92" y="59">Occupied</name>
+		</location>
+		<init ref="id4"/>
+		<transition>
+			<source ref="id4"/>
+			<target ref="id4"/>
+			<label kind="guard" x="-204" y="119">carEnter == 1</label>
+			<nail x="-145" y="170"/>
+			<nail x="-222" y="136"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id4"/>
+			<label kind="guard" x="-118" y="-51">carEnter == (0||1)</label>
+			<label kind="assignment" x="-118" y="-17">intersectionOccupied = false</label>
+			<nail x="102" y="-17"/>
+			<nail x="-136" y="-17"/>
+		</transition>
+		<transition>
+			<source ref="id4"/>
+			<target ref="id5"/>
+			<label kind="guard" x="-42" y="68">carEnter == 2</label>
+			<label kind="assignment" x="-85" y="110">intersectionOccupied = true</label>
+		</transition>
+	</template>
+	<system>chan cross;
+
+car1North = car();
+car2South = car();
+car3East = car();
+car4West = car();
+
+intersection1 = intersection();
+
+system car1North,car2South,car3East,car4West, intersection;
+</system>
+	<queries>
+		<query>
+			<formula></formula>
+			<comment></comment>
+		</query>
+	</queries>
+</nta>
