@@ -1,0 +1,139 @@
+#include <stdio.h>
+#include <stdlib.h>   // for genarating randomnumbers
+#include <time.h>     // to enable time
+
+typedef enum { // to represent the priority levels
+  normal = 3,  // priority level 03: normal vehicles, first come first serve
+  paid = 2,    // priority level 02: paid for priority vehicles
+  emergency = 1 // priority level 01: emergency vehicles, ambulance, police etc..
+} 
+PriorityValue;
+
+typedef enum {  //spawn directions
+  NORTH,
+  EAST,
+  WEST,
+  SOUTH
+} Direction;
+
+typedef enum { // speed levels
+  LEVEL_1 = 1,
+  LEVEL_2 = 2,
+  LEVEL_3 = 3
+} SpeedLevel;
+
+typedef struct { // custom representation of the vehicle's data set
+  int id;
+  SpeedLevel speed;
+  Direction direction;
+  Direction destination;
+  PriorityValue priority;
+} 
+Vehicle;
+
+void VehicleSpawn() {
+  int id = rand() % 50; //random value from 0 to 50
+  int directionNum = rand() % 4; // Generate a random direction for the vehicle
+  Direction direction;
+  switch (directionNum) {
+    case 0:
+      direction = NORTH;
+      break;
+    case 1:
+      direction = EAST;
+      break;
+    case 2:
+      direction = WEST;
+      break;
+    case 3:
+      direction = SOUTH;
+      break;
+  }
+  
+   int randomPriority = rand() % 3;  // Generate a random priority level for the vehicle
+  PriorityValue priority;
+  switch (randomPriority) {
+    case 0:
+      priority = emergency;
+      break;
+    case 1:
+      priority = paid;
+      break;
+    default:
+      priority = normal;
+      break;
+  }
+  
+  int randomSpeedLevel = rand() % 3 + 1; // Generate a random speed level for the vehicle
+  SpeedLevel speed;
+  switch (randomSpeedLevel) {
+    case 1:
+      speed = LEVEL_1;
+      break;
+    case 2:
+      speed = LEVEL_2;
+      break;
+    case 3:
+      speed = LEVEL_3;
+      break;
+  }
+
+  Direction destination;  // randomly select spawn direction to destination direction
+  switch (direction) {
+    case NORTH:
+      destination = SOUTH;
+      break;
+    case EAST:
+      destination = WEST;
+      break;
+    case WEST:
+      destination = EAST;
+      break;
+    default:
+      destination = NORTH;
+      break;
+  }
+
+  
+
+  printf("Vehicle spawned with id: %d ||  priority value: %d || speed level: %d || from ", id, priority, speed);  
+  switch (direction) {
+    case NORTH:
+      printf("North");
+      break;
+    case EAST:
+      printf("East");
+      break;
+    case WEST:
+      printf("West");
+      break;
+    case SOUTH:
+      printf("South");
+      break;
+  }
+  printf(" to the destination ");
+  switch (destination) {
+    case NORTH:
+      printf("North\n");
+      break;
+    case EAST:
+      printf("East\n");
+      break;
+    case WEST:
+      printf("West\n");
+      break;
+    case SOUTH:
+      printf("South\n");
+      break;
+  }
+}
+
+int main() {
+  srand(time(0)); // random number generator
+
+  for (int j = 0; j < 50; j++) { // Spawn vehicles 
+    VehicleSpawn();
+  }
+
+  return 0;
+}
