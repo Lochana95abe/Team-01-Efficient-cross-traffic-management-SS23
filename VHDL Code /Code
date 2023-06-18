@@ -1,0 +1,185 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity HW_SW_CODE is
+    Port (
+        clk_in : in std_logic;
+        reset : in std_logic;
+        car1, car2, car3, car4 : in std_logic;
+        car1_out, car2_out, car3_out, car4_out : out std_logic;
+        north_lane, west_lane, east_lane, south_lane : in std_logic;
+        north_out, west_out, east_out, south_out : buffer std_logic
+    );
+end HW_SW_CODE;
+
+architecture Behavioral of HW_SW_CODE is
+    signal counter : integer range 0 to 1000000 := 0;
+    signal clk_out : std_logic := '0';
+    constant DIVIDER_VALUE : integer := 1000000;
+    signal temp : integer range 0 to 9 := 0;
+
+    type StateType is (Idle, EnterJunction, Intersection, Leave);
+    signal current_state, next_state : StateType;
+    signal lane_selected : integer range 0 to 4 := 0;
+    signal Priority : integer range 0 to 4 := 0;
+    signal Speed : integer range 0 to 3 := 0;
+    signal intersectionMatrix : integer range 0 to 3 := 0;
+
+begin
+    process (clk_in, reset)
+    begin
+        if reset = '1' then
+            counter <= 0;
+            clk_out <= '0';
+        elsif rising_edge(clk_in) then
+            if counter = DIVIDER_VALUE then
+                counter <= 0;
+                clk_out <= not clk_out;
+                if temp = 9 then
+                    temp <= 0;
+                else
+                    temp <= temp + 1;
+                end if;
+            else
+                counter <= counter + 1;
+            end if;
+        end if;
+    end process;
+
+    process (current_state, car1, car2, car3, car4)
+    begin
+        next_state <= current_state;
+
+        case current_state is
+            when Idle =>
+                car1_out <= '0';
+                car2_out <= '0';
+                car3_out <= '0';
+                car4_out <= '0';
+                north_out <= '0';
+                west_out <= '0';
+                east_out <= '0';
+                south_out <= '0';
+
+                if car1 = '1' then
+                    if west_lane = '1' then
+                        lane_selected <= 1;
+                        next_state <= EnterJunction;
+                    end if;
+                elsif car2 = '1' then
+                    if north_lane = '1' then
+                        lane_selected <= 2;
+                        next_state <= EnterJunction;
+                    end if;
+                elsif car3 = '1' then
+                    if south_lane = '1' then
+                        lane_selected <= 3;
+                        next_state <= EnterJunction;
+                    end if;
+                elsif car4 = '1' then
+                    if east_lane = '1' then
+                        lane_selected <= 4;
+                        next_state <= EnterJunction;
+                    end if;
+                end if;
+
+            when EnterJunction =>
+                case lane_selected is
+                    when 1 =>
+                        north_out <= '1';
+                        next_state <= Intersection;
+                    when 2 =>
+                        south_out <= '1';
+                        next_state <= Intersection;
+                    when 3 =>
+                        north_out <= '1';
+                        next_state <= Intersection;
+                    when 4 =>
+                        west_out <= '1';
+                        next_state <= Intersection;
+                    when others =>
+                        car2_out <= '1';
+                        next_state <= Intersection;
+                end case;
+              
+
+
+
+           when Intersection =>
+                case lane_selected is
+                    when 1 =>
+                        if east_out = '1' then
+                            Priority <= 1;
+                        elsif north_out = '1' then
+                            Priority <= 3;
+                        elsif south_out = '1' then
+                            Priority <= 2;
+                        end if;
+                        
+                    when 2 =>
+                        if east_out = '1' then
+                            Priority <= 2;
+                        elsif west_out = '1' then
+                            Priority <= 3;
+                        elsif south_out = '1' then
+                            Priority <= 1;
+                        end if; 
+                    
+                    when 3 =>
+                        if west_out = '1' then
+                            Priority <= 1;
+                        elsif east_out = '1' then
+                            Priority <= 2;
+                        elsif south_out = '1' then
+                            Priority <= 3;
+                        end if; 
+                      
+                  when 4 =>
+                        if north_out = '1' then
+                            Priority <= 1;
+                        elsif east_out = '1' then
+                            Priority <= 2;
+                        elsif west_out = '1' then
+                            Priority <= 3;
+                        end if;       
+                    when others =>
+                        Priority <= 0;
+                end case;
+                next_state <= Leave;
+
+          
+                when Leave =>
+        if Priority = 1 then
+            car1_out <= '1';
+            next_state <= Idle;
+        elsif Priority = 2 then
+            if Speed = 1 then
+                car1_out <= '1';
+                next_state <= Idle;
+            elsif Speed = 2 then
+                car2_out <= '1';
+                next_state <= Idle;
+            end if;
+        elsif Priority = 3 then
+            if Speed = 1 then
+                car1_out <= '1';
+                next_state <= Idle;
+            elsif Speed = 2 then
+                car2_out <= '1';
+                next_state <= Idle;
+            elsif Speed = 3 then
+                car3_out <= '1';
+                next_state <= Idle;
+            end if;
+        else
+            -- No priority or speed condition met, default behavior
+            car4_out <= '1';
+            --next_state <= Idle;
+        end if;
+            
+                car4_out <= '1';
+               -- next_state <= Idle;
+        end case;
+    end process;
+end Behavioral;
